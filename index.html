@@ -45,7 +45,7 @@
       }
     }
 
-    function App() {
+    function useGameState() {
       const [cells, setCells] = React.useState([null, null, null, null, null, null, null, null, null]);
       const [currentStep, setCurrentStep] = React.useState(SYMBOL_O);
       const [winnerSequence, setWinnerSequence] = React.useState();
@@ -64,14 +64,36 @@
         setWinnerSequence(winner);
       }
 
-      const resetGame = () => {
+      const handleResetClick = () => {
         setCells(Array.from({length: 9}, () => null));
         setCurrentStep(SYMBOL_O);
-        setWinnerSequence();
+        setWinnerSequence(undefined);
       }
 
       const winnerSymbol = winnerSequence ? cells[winnerSequence[0]] : undefined
       const isDraw = !winnerSequence && !cells.includes(null)
+
+      return {
+        cells,
+        currentStep,
+        winnerSequence,
+        handleCellClick,
+        handleResetClick,
+        winnerSymbol,
+        isDraw,
+      }   // превращается в {'cells': cells, 'currentStep': currentStep, ...}
+    }
+
+    function App() {
+      const {
+        cells,
+        currentStep,
+        winnerSequence,
+        handleCellClick,
+        handleResetClick,
+        winnerSymbol,
+        isDraw,
+      } = useGameState();
       
       return (
         <div className="game">
@@ -90,7 +112,7 @@
               />
             ))}
           </div>
-          <button className="cell reset-button" onClick={resetGame}>Сбросить</button>
+          <button className="reset-button" onClick={handleResetClick}>Сбросить</button>
         </div>
       ) // возвращает реакт-код, иначе называемый jsx (не html + js или как-то еще)
     }
